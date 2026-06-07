@@ -402,7 +402,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_SUBJECT, "¡Mira mi app de Notas!")
-            putExtra(Intent.EXTRA_TEXT, "Descarga mi increíble app de notas: [www.google.com].")
+            putExtra(Intent.EXTRA_TEXT, "Descarga mi increíble app de notas: [https://github.com/yerfac98/MiAppDeNotasM/blob/main/app-debug.apk].")
         }
         startActivity(Intent.createChooser(shareIntent, "Compartir app usando"))
     }
