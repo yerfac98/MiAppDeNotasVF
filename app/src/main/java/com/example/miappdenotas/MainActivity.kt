@@ -201,6 +201,18 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 Toast.makeText(this, "Ordenado por: Más Antigua", Toast.LENGTH_SHORT).show()
                 return true
             }
+            R.id.action_filter_favorites -> {
+                val mostrandoFavoritos = notaViewModel.toggleFavoritesFilter()
+
+                val mensaje = if (mostrandoFavoritos) {
+                    "Mostrando solo favoritos"
+                } else {
+                    "Mostrando todas las notas"
+                }
+
+                Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+                return true
+            }
         }
 
         // Esto es necesario para manejar la acción de abrir/cerrar el Drawer

@@ -34,11 +34,23 @@ class NotaRepository(private val notaDao: NotaDao) {
         return notaDao.buscarNotas(searchQuery)
     }
 
+    fun buscarNotasFavoritas(searchQuery: String): LiveData<List<Nota>> {
+        return notaDao.buscarNotasFavoritas(searchQuery)
+    }
+
     fun obtenerNotasPorFechaDesc(): LiveData<List<Nota>> {
         return notaDao.obtenerNotasPorFechaDesc()
     }
 
     fun obtenerNotasPorFechaAsc(): LiveData<List<Nota>> {
         return notaDao.obtenerNotasPorFechaAsc()
+    }
+
+    fun obtenerFavoritasPorFechaDesc(): LiveData<List<Nota>> {
+        return notaDao.obtenerFavoritasPorFechaDesc()
+    }
+
+    fun obtenerFavoritasPorFechaAsc(): LiveData<List<Nota>> {
+        return notaDao.obtenerFavoritasPorFechaAsc()
     }
 }

@@ -21,6 +21,7 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
 
     private val _searchQuery = MutableLiveData<String>()
     private val _sortOrder = MutableLiveData<SortOrder>()
+    private val _showOnlyFavorites = MutableLiveData<Boolean>()
 
     val notasFiltradas = MediatorLiveData<List<Nota>>()
 
@@ -29,6 +30,7 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
     init {
         _searchQuery.value = ""
         _sortOrder.value = SortOrder.DATE_DESC
+        _showOnlyFavorites.value = false
 
         notasFiltradas.addSource(_searchQuery) {
             updateNotesSource()
@@ -37,18 +39,34 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         notasFiltradas.addSource(_sortOrder) {
             updateNotesSource()
         }
+
+        notasFiltradas.addSource(_showOnlyFavorites) {
+            updateNotesSource()
+        }
     }
 
     private fun updateNotesSource() {
         val query = _searchQuery.value
         val order = _sortOrder.value ?: SortOrder.DATE_DESC
+        val showOnlyFavorites = _showOnlyFavorites.value ?: false
 
         val newSource = if (!query.isNullOrEmpty() && query != "%%") {
-            repository.buscarNotas(query)
+            if (showOnlyFavorites) {
+                repository.buscarNotasFavoritas(query)
+            } else {
+                repository.buscarNotas(query)
+            }
         } else {
-            when (order) {
-                SortOrder.DATE_DESC -> repository.obtenerNotasPorFechaDesc()
-                SortOrder.DATE_ASC -> repository.obtenerNotasPorFechaAsc()
+            if (showOnlyFavorites) {
+                when (order) {
+                    SortOrder.DATE_DESC -> repository.obtenerFavoritasPorFechaDesc()
+                    SortOrder.DATE_ASC -> repository.obtenerFavoritasPorFechaAsc()
+                }
+            } else {
+                when (order) {
+                    SortOrder.DATE_DESC -> repository.obtenerNotasPorFechaDesc()
+                    SortOrder.DATE_ASC -> repository.obtenerNotasPorFechaAsc()
+                }
             }
         }
 
@@ -73,6 +91,12 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         if (_sortOrder.value != order) {
             _sortOrder.value = order
         }
+    }
+
+    fun toggleFavoritesFilter(): Boolean {
+        val newValue = !(_showOnlyFavorites.value ?: false)
+        _showOnlyFavorites.value = newValue
+        return newValue
     }
 
     fun insertar(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
