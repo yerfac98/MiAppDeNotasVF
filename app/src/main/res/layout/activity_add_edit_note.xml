@@ -5,42 +5,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="0dp">
+    android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_edit_note"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#000000" android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        android:background="#000000"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:padding="16dp">
 
         <EditText
             android:id="@+id/edit_text_title"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Título de la Nota"
-            android:inputType="textCapWords"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.AppCompat.EditText"
-            android:background="@null"/>
+            android:background="@null"
+            android:hint="Título de la Nota"
+            android:inputType="textCapSentences"
+            android:maxLines="2"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/edit_text_content"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="top"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="top|start"
             android:hint="Ingresa tu nota aquí..."
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textCapSentences"
+            android:minLines="8"
             android:padding="8dp"
-            android:background="@null"/>
+            android:scrollbars="vertical" />
+
     </LinearLayout>
 
 </LinearLayout>
