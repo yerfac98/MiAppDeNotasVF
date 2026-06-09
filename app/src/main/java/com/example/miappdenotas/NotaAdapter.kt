@@ -23,36 +23,28 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
     }
 
     override fun onBindViewHolder(holder: NotaHolder, position: Int) {
-        val currentNote = getItem(position)
-        holder.bind(currentNote)
+        holder.bind(getItem(position))
     }
 
-    /**
-     * Implementación de la función getNoteAt(position) requerida por MainActivity
-     * para la funcionalidad de deslizar para eliminar.
-     */
     fun getNoteAt(position: Int): Nota {
         return getItem(position)
     }
 
-    // --- CLASE INTERNA: NotaHolder ---
     inner class NotaHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textViewTitle: TextView = itemView.findViewById(R.id.text_view_title)
         private val textViewContent: TextView = itemView.findViewById(R.id.text_view_content)
         private val textViewDate: TextView = itemView.findViewById(R.id.text_view_date)
 
         init {
-            // Manejador de click simple (para editar)
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     listener?.onItemClick(getItem(position))
                 }
             }
 
-            // Manejador de click largo (para confirmar eliminación)
             itemView.setOnLongClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     listener?.onItemLongClick(getItem(position))
                     true
@@ -64,19 +56,18 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
 
         fun bind(nota: Nota) {
             textViewTitle.text = nota.titulo
-            // Mostrar una vista previa del contenido
-            textViewContent.text = if (nota.contenido.length > 50)
-                nota.contenido.substring(0, 50) + "..."
-            else
-                nota.contenido
 
-            // Formatear el timestamp a una fecha legible
+            textViewContent.text = if (nota.contenido.length > 50) {
+                nota.contenido.substring(0, 50) + "..."
+            } else {
+                nota.contenido
+            }
+
             val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             textViewDate.text = dateFormat.format(Date(nota.fecha))
         }
     }
 
-    // --- INTERFAZ PARA CLICKS ---
     interface OnItemClickListener {
         fun onItemClick(nota: Nota)
         fun onItemLongClick(nota: Nota)
@@ -86,7 +77,6 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
         this.listener = listener
     }
 
-    // --- CLASE INTERNA: DiffCallback ---
     class DiffCallback : DiffUtil.ItemCallback<Nota>() {
         override fun areItemsTheSame(oldItem: Nota, newItem: Nota): Boolean {
             return oldItem.id == newItem.id
