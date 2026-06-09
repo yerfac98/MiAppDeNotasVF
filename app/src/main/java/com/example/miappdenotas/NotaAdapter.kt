@@ -57,8 +57,8 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
         fun bind(nota: Nota) {
             textViewTitle.text = nota.titulo
 
-            textViewContent.text = if (nota.contenido.length > 50) {
-                nota.contenido.substring(0, 50) + "..."
+            textViewContent.text = if (nota.contenido.length > 35) {
+                nota.contenido.substring(0, 35) + "..."
             } else {
                 nota.contenido
             }
