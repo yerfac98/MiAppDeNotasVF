@@ -24,19 +24,19 @@ interface NotaDao {
     @Delete
     suspend fun eliminar(nota: Nota)
 
-    // 🛑 ORDENACIÓN DESCENDENTE (Más Reciente)
-    @Query("SELECT * FROM notas_table ORDER BY id DESC")
+    // Ordena mostrando primero las notas más recientes
+    @Query("SELECT * FROM notas_table ORDER BY fecha DESC")
     fun obtenerNotasPorFechaDesc(): LiveData<List<Nota>>
 
-    // 🛑 ORDENACIÓN ASCENDENTE (Más Antigua)
-    @Query("SELECT * FROM notas_table ORDER BY id ASC")
+    // Ordena mostrando primero las notas más antiguas
+    @Query("SELECT * FROM notas_table ORDER BY fecha ASC")
     fun obtenerNotasPorFechaAsc(): LiveData<List<Nota>>
 
-    // 🛑 FUNCIÓN DE BÚSQUEDA
-    @Query("SELECT * FROM notas_table WHERE titulo LIKE :searchQuery OR contenido LIKE :searchQuery ORDER BY id DESC")
+    // Busca en título o contenido, mostrando primero lo más reciente
+    @Query("SELECT * FROM notas_table WHERE titulo LIKE :searchQuery OR contenido LIKE :searchQuery ORDER BY fecha DESC")
     fun buscarNotas(searchQuery: String): LiveData<List<Nota>>
 
-    @Query("SELECT * FROM notas_table ORDER BY id DESC")
+    @Query("SELECT * FROM notas_table ORDER BY fecha DESC")
     suspend fun obtenerTodasLasNotasList(): List<Nota>
 
     @Query("DELETE FROM notas_table")
