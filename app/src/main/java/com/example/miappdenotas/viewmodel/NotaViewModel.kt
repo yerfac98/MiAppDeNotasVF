@@ -1,22 +1,20 @@
 package com.example.miappdenotas.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.example.miappdenotas.model.Nota
 import com.example.miappdenotas.repository.NotaRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-// 🛑 Enumeración para el estado de ordenamiento
 enum class SortOrder {
-    DATE_DESC, // Más Reciente (Default)
-    DATE_ASC   // Más Antigua
+    DATE_DESC,
+    DATE_ASC
 }
 
 class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
@@ -24,19 +22,21 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
     private val _searchQuery = MutableLiveData<String>()
     private val _sortOrder = MutableLiveData<SortOrder>()
 
-    // LiveData pública que la UI observará
     val notasFiltradas = MediatorLiveData<List<Nota>>()
 
     private var currentSource: LiveData<List<Nota>>? = null
 
     init {
-        // Inicializa los estados
         _searchQuery.value = ""
-        _sortOrder.value = SortOrder.DATE_DESC // Default: Más reciente
+        _sortOrder.value = SortOrder.DATE_DESC
 
-        // Observa el cambio del término de búsqueda y el orden
-        notasFiltradas.addSource(_searchQuery) { updateNotesSource() }
-        notasFiltradas.addSource(_sortOrder) { updateNotesSource() }
+        notasFiltradas.addSource(_searchQuery) {
+            updateNotesSource()
+        }
+
+        notasFiltradas.addSource(_sortOrder) {
+            updateNotesSource()
+        }
     }
 
     private fun updateNotesSource() {
@@ -44,10 +44,8 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         val order = _sortOrder.value ?: SortOrder.DATE_DESC
 
         val newSource = if (!query.isNullOrEmpty() && query != "%%") {
-            // Caso 1: Hay una búsqueda activa. Usamos la query de búsqueda.
             repository.buscarNotas(query)
         } else {
-            // Caso 2: No hay búsqueda. Aplicar el orden seleccionado.
             when (order) {
                 SortOrder.DATE_DESC -> repository.obtenerNotasPorFechaDesc()
                 SortOrder.DATE_ASC -> repository.obtenerNotasPorFechaAsc()
@@ -56,17 +54,14 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
 
         if (newSource == currentSource) return
 
-        // 1. Elimina la fuente anterior (si existe)
         currentSource?.let {
             notasFiltradas.removeSource(it)
         }
 
-        // 2. Añade la nueva fuente
         notasFiltradas.addSource(newSource) { notes ->
             notasFiltradas.value = notes
         }
 
-        // 3. Guarda la nueva fuente como la actual
         currentSource = newSource
     }
 
@@ -79,10 +74,6 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
             _sortOrder.value = order
         }
     }
-
-    // -----------------------------------------------------------------
-    // OPERACIONES CRUD Y ARCHIVO
-    // -----------------------------------------------------------------
 
     fun insertar(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
         repository.insertar(nota)
@@ -101,7 +92,6 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
     }
 
     suspend fun obtenerTodasLasNotasList(): List<Nota> {
-        delay(200)
         return withContext(Dispatchers.IO) {
             repository.obtenerTodasLasNotasList()
         }
@@ -111,11 +101,11 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         repository.reemplazarTodasLasNotas(notas)
     }
 
-    // -----------------------------------------------------------------
-    // FACTORY ANIDADA
-    // -----------------------------------------------------------------
     companion object {
-        class NotaViewModelFactory(private val repository: NotaRepository) : ViewModelProvider.Factory {
+        class NotaViewModelFactory(
+            private val repository: NotaRepository
+        ) : ViewModelProvider.Factory {
+
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(NotaViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
