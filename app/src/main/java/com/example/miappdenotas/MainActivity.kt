@@ -291,12 +291,24 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 val position = viewHolder.adapterPosition
                 val noteToDelete = adapter.getNoteAt(position)
 
-                notaViewModel.eliminar(noteToDelete)
-                Toast.makeText(
-                    this@MainActivity,
-                    "Nota eliminada: ${noteToDelete.titulo}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("Eliminar nota")
+                    .setMessage("¿Deseas eliminar \"${noteToDelete.titulo}\"?")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        notaViewModel.eliminar(noteToDelete)
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Nota eliminada: ${noteToDelete.titulo}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .setNegativeButton("Cancelar") { _, _ ->
+                        adapter.notifyItemChanged(position)
+                    }
+                    .setOnCancelListener {
+                        adapter.notifyItemChanged(position)
+                    }
+                    .show()
             }
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView)
