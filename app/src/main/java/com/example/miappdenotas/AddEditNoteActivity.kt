@@ -67,23 +67,31 @@ class AddEditNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        val title = editTextTitle.text.toString()
-        val content = editTextContent.text.toString()
+        val title = editTextTitle.text.toString().trim()
+        val content = editTextContent.text.toString().trim()
 
-        if (title.trim().isEmpty() || content.trim().isEmpty()) {
-            Toast.makeText(this, "El título y el contenido no pueden estar vacíos.", Toast.LENGTH_SHORT).show()
-            return // Sale sin guardar
+        if (title.isEmpty()) {
+            editTextTitle.error = "El título no puede estar vacío"
+            editTextTitle.requestFocus()
+            return
+        }
+
+        if (content.isEmpty()) {
+            editTextContent.error = "El contenido no puede estar vacío"
+            editTextContent.requestFocus()
+            return
         }
 
         val data = Intent().apply {
             putExtra(MainActivity.EXTRA_TITLE, title)
             putExtra(MainActivity.EXTRA_CONTENT, content)
+
             if (noteId != -1) {
                 putExtra(MainActivity.EXTRA_ID, noteId)
             }
         }
 
-        setResult(Activity.RESULT_OK, data) // Establece el resultado
-        finish() // Cierra la actividad
+        setResult(Activity.RESULT_OK, data)
+        finish()
     }
 }
