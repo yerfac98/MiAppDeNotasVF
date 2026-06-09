@@ -6,9 +6,6 @@ import com.example.miappdenotas.model.NotaDao
 
 class NotaRepository(private val notaDao: NotaDao) {
 
-    // Ya no se usa directamente, pero se mantiene para consistencia.
-    val todasLasNotas: LiveData<List<Nota>> = notaDao.obtenerNotasPorFechaDesc()
-
     suspend fun insertar(nota: Nota) {
         notaDao.insertar(nota)
     }
@@ -33,12 +30,10 @@ class NotaRepository(private val notaDao: NotaDao) {
         notaDao.reemplazarTodasLasNotas(notas)
     }
 
-    // 🛑 FUNCIÓN DE BÚSQUEDA
     fun buscarNotas(searchQuery: String): LiveData<List<Nota>> {
         return notaDao.buscarNotas(searchQuery)
     }
 
-    // 🛑 FUNCIONES DE ORDENACIÓN
     fun obtenerNotasPorFechaDesc(): LiveData<List<Nota>> {
         return notaDao.obtenerNotasPorFechaDesc()
     }
