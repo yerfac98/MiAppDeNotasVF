@@ -39,6 +39,7 @@ import java.io.InputStreamReader
 import java.io.OutputStream
 import java.util.regex.Pattern
 import android.view.View
+import androidx.recyclerview.widget.DefaultItemAnimator
 
 class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
     private lateinit var emptyView: View
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         setupToolbarAndDrawer()
         initViewModel()
         setupRecyclerView()
+
         emptyView = findViewById(R.id.empty_view)
         setupFab()
         setupBackPressHandler()
@@ -193,6 +195,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 Toast.makeText(this, "Ordenado por: Más Reciente", Toast.LENGTH_SHORT).show()
                 return true
             }
+
             R.id.sort_by_date_asc -> {
                 notaViewModel.setSortOrder(SortOrder.DATE_ASC)
                 Toast.makeText(this, "Ordenado por: Más Antigua", Toast.LENGTH_SHORT).show()
@@ -217,6 +220,12 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
+        recyclerView.itemAnimator = DefaultItemAnimator().apply {
+            addDuration = 250
+            removeDuration = 250
+            moveDuration = 250
+            changeDuration = 250
+        }
 
         adapter = NotaAdapter()
         recyclerView.adapter = adapter
@@ -267,10 +276,15 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 lifecycleScope.launch {
                     try {
                         notaViewModel.eliminar(nota)
-                        Toast.makeText(this@MainActivity, "Nota eliminada.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "Nota eliminada.", Toast.LENGTH_SHORT)
+                            .show()
                     } catch (e: Exception) {
                         Log.e("MainActivity", "Error durante la eliminación", e)
-                        Toast.makeText(this@MainActivity, "Error al eliminar la nota.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Error al eliminar la nota.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } finally {
                         setMenuEnabledState(true)
                     }
@@ -280,6 +294,18 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
             .show()
     }
 
+    override fun onFavoriteClick(nota: Nota) {
+        val notaActualizada = nota.copy(favorita = !nota.favorita)
+        notaViewModel.actualizar(notaActualizada)
+
+        val mensaje = if (notaActualizada.favorita) {
+            "Agregada a favoritos"
+        } else {
+            "Quitada de favoritos"
+        }
+
+        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
     private fun setupSwipeToDelete(recyclerView: RecyclerView) {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -449,12 +475,14 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
                     val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                     prefs.edit().putString(KEY_LAST_SAVE_URI, uri.toString()).apply()
-                    val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    val flags =
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     contentResolver.takePersistableUriPermission(uri, flags)
 
                     writeExportedContent(uri, exportContent)
                 }
             }
+
             IMPORT_REQUEST_CODE -> {
                 data.data?.let { uri ->
                     readAndImportContent(uri)
@@ -538,7 +566,11 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         val lastUriString = prefs.getString(KEY_LAST_SAVE_URI, null)
 
         if (lastUriString == null) {
-            Toast.makeText(this, "No se ha guardado una ubicación. Por favor, use 'Guardar Notas Generales' primero.", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "No se ha guardado una ubicación. Por favor, use 'Guardar Notas Generales' primero.",
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
 
@@ -552,7 +584,11 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
             writeExportedContent(lastUri, exportContent)
 
-            Toast.makeText(this@MainActivity, "Cambios guardados exitosamente en la ubicación anterior.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@MainActivity,
+                "Cambios guardados exitosamente en la ubicación anterior.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

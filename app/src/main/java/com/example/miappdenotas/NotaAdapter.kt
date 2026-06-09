@@ -34,6 +34,7 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
         private val textViewTitle: TextView = itemView.findViewById(R.id.text_view_title)
         private val textViewContent: TextView = itemView.findViewById(R.id.text_view_content)
         private val textViewDate: TextView = itemView.findViewById(R.id.text_view_date)
+        private val textViewFavorite: TextView = itemView.findViewById(R.id.text_view_favorite)
 
         init {
             itemView.setOnClickListener {
@@ -52,10 +53,23 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
                     false
                 }
             }
+
+            textViewFavorite.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    listener?.onFavoriteClick(getItem(position))
+                }
+            }
         }
 
         fun bind(nota: Nota) {
             textViewTitle.text = nota.titulo
+
+            textViewFavorite.text = if (nota.favorita) {
+                "★"
+            } else {
+                "☆"
+            }
 
             textViewContent.text = if (nota.contenido.length > 35) {
                 nota.contenido.substring(0, 35) + "..."
@@ -71,6 +85,7 @@ class NotaAdapter : ListAdapter<Nota, NotaAdapter.NotaHolder>(DiffCallback()) {
     interface OnItemClickListener {
         fun onItemClick(nota: Nota)
         fun onItemLongClick(nota: Nota)
+        fun onFavoriteClick(nota: Nota)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
