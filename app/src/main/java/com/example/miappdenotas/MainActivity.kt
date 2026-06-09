@@ -38,8 +38,10 @@ import java.io.File
 import java.io.InputStreamReader
 import java.io.OutputStream
 import java.util.regex.Pattern
+import android.view.View
 
 class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
+    private lateinit var emptyView: View
 
     // ********** CONSTANTES **********
     companion object {
@@ -100,6 +102,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         setupToolbarAndDrawer()
         initViewModel()
         setupRecyclerView()
+        emptyView = findViewById(R.id.empty_view)
         setupFab()
         setupBackPressHandler()
     }
@@ -147,6 +150,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         // Observa la LiveData que maneja la lista completa o los resultados de la búsqueda/ordenamiento
         notaViewModel.notasFiltradas.observe(this, Observer { notas ->
             adapter.submitList(notas)
+            emptyView.visibility = if (notas.isEmpty()) View.VISIBLE else View.GONE
         })
     }
 
