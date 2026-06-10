@@ -10,5 +10,6 @@ data class Nota(
     val titulo: String,
     val contenido: String,
     val fecha: Long = System.currentTimeMillis(),
-    val favorita: Boolean = false
+    val favorita: Boolean = false,
+    val eliminada: Boolean = false
 )

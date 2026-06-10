@@ -24,35 +24,40 @@ interface NotaDao {
     @Delete
     suspend fun eliminar(nota: Nota)
 
-    @Query("SELECT * FROM notas_table ORDER BY fecha DESC")
+    @Query("SELECT * FROM notas_table WHERE eliminada = 0 ORDER BY fecha DESC")
     fun obtenerNotasPorFechaDesc(): LiveData<List<Nota>>
 
-    @Query("SELECT * FROM notas_table ORDER BY fecha ASC")
+    @Query("SELECT * FROM notas_table WHERE eliminada = 0 ORDER BY fecha ASC")
     fun obtenerNotasPorFechaAsc(): LiveData<List<Nota>>
 
-    @Query("SELECT * FROM notas_table WHERE favorita = 1 ORDER BY fecha DESC")
+    @Query("SELECT * FROM notas_table WHERE favorita = 1 AND eliminada = 0 ORDER BY fecha DESC")
     fun obtenerFavoritasPorFechaDesc(): LiveData<List<Nota>>
 
-    @Query("SELECT * FROM notas_table WHERE favorita = 1 ORDER BY fecha ASC")
+    @Query("SELECT * FROM notas_table WHERE favorita = 1 AND eliminada = 0 ORDER BY fecha ASC")
     fun obtenerFavoritasPorFechaAsc(): LiveData<List<Nota>>
 
     @Query("""
         SELECT * FROM notas_table 
-        WHERE (titulo LIKE :searchQuery OR contenido LIKE :searchQuery) 
+        WHERE eliminada = 0
+        AND (titulo LIKE :searchQuery OR contenido LIKE :searchQuery) 
         ORDER BY fecha DESC
     """)
     fun buscarNotas(searchQuery: String): LiveData<List<Nota>>
 
     @Query("""
         SELECT * FROM notas_table 
-        WHERE favorita = 1 
+        WHERE eliminada = 0
+        AND favorita = 1 
         AND (titulo LIKE :searchQuery OR contenido LIKE :searchQuery) 
         ORDER BY fecha DESC
     """)
     fun buscarNotasFavoritas(searchQuery: String): LiveData<List<Nota>>
 
-    @Query("SELECT * FROM notas_table ORDER BY fecha DESC")
+    @Query("SELECT * FROM notas_table WHERE eliminada = 0 ORDER BY fecha DESC")
     suspend fun obtenerTodasLasNotasList(): List<Nota>
+
+    @Query("SELECT * FROM notas_table WHERE eliminada = 1 ORDER BY fecha DESC")
+    fun obtenerNotasEliminadas(): LiveData<List<Nota>>
 
     @Query("DELETE FROM notas_table")
     suspend fun eliminarTodasLasNotas()

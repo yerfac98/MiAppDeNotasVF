@@ -53,4 +53,7 @@ class NotaRepository(private val notaDao: NotaDao) {
     fun obtenerFavoritasPorFechaAsc(): LiveData<List<Nota>> {
         return notaDao.obtenerFavoritasPorFechaAsc()
     }
+    fun obtenerNotasEliminadas(): LiveData<List<Nota>> {
+        return notaDao.obtenerNotasEliminadas()
+    }
 }

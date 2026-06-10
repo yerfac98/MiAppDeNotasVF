@@ -4,16 +4,26 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_trash"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="Papelera" />
+
         <item
             android:id="@+id/nav_export"
             android:icon="@drawable/ic_export"
-            android:title="Exportar Notas (.gfa)" /> <item
-        android:id="@+id/nav_save_general"
-        android:icon="@drawable/ic_save"
-        android:title="Guardar Cambios Actuales" /> <item
-        android:id="@+id/nav_import"
-        android:icon="@drawable/ic_import"
-        android:title="Importar Notas (.gfa)" />
+            android:title="Exportar Notas (.gfa)" />
+
+        <item
+            android:id="@+id/nav_save_general"
+            android:icon="@drawable/ic_save"
+            android:title="Guardar Cambios Actuales" />
+
+        <item
+            android:id="@+id/nav_import"
+            android:icon="@drawable/ic_import"
+            android:title="Importar Notas (.gfa)" />
 
     </group>
 
@@ -28,10 +38,12 @@
                 android:id="@+id/nav_share_app"
                 android:icon="@drawable/ic_share"
                 android:title="Compartir Aplicación" />
+
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_info"
                 android:title="Acerca de la Aplicación" />
         </menu>
     </item>
+
 </menu>

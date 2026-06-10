@@ -136,6 +136,9 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 R.id.nav_share_notes -> shareLastExportedFile()
                 R.id.nav_share_app -> shareApp()
                 R.id.nav_about -> showAbout()
+                R.id.nav_trash -> {
+                    startActivity(Intent(this, TrashActivity::class.java))
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -287,9 +290,9 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
                 lifecycleScope.launch {
                     try {
-                        notaViewModel.eliminar(nota)
-                        Toast.makeText(this@MainActivity, "Nota eliminada.", Toast.LENGTH_SHORT)
-                            .show()
+                        val notaActualizada = nota.copy(eliminada = true)
+                        notaViewModel.actualizar(notaActualizada)
+                        Toast.makeText(this@MainActivity, "Nota enviada a papelera.", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
                         Log.e("MainActivity", "Error durante la eliminación", e)
                         Toast.makeText(
@@ -337,10 +340,11 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                     .setTitle("Eliminar nota")
                     .setMessage("¿Deseas eliminar \"${noteToDelete.titulo}\"?")
                     .setPositiveButton("Eliminar") { _, _ ->
-                        notaViewModel.eliminar(noteToDelete)
+                        val notaActualizada = noteToDelete.copy(eliminada = true)
+                        notaViewModel.actualizar(notaActualizada)
                         Toast.makeText(
                             this@MainActivity,
-                            "Nota eliminada: ${noteToDelete.titulo}",
+                            "Nota enviada a papelera: ${noteToDelete.titulo}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

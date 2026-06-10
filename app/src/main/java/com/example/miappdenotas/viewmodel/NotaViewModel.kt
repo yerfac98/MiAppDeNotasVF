@@ -125,6 +125,10 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         repository.reemplazarTodasLasNotas(notas)
     }
 
+    fun obtenerNotasEliminadas(): LiveData<List<Nota>> {
+        return repository.obtenerNotasEliminadas()
+    }
+
     companion object {
         class NotaViewModelFactory(
             private val repository: NotaRepository
