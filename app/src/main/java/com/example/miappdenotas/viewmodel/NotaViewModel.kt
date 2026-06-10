@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.miappdenotas.model.Nota
 import com.example.miappdenotas.repository.NotaRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,6 +27,9 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
     val notasFiltradas = MediatorLiveData<List<Nota>>()
 
     private var currentSource: LiveData<List<Nota>>? = null
+
+    private val userId: String
+        get() = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     init {
         _searchQuery.value = ""
@@ -49,23 +53,24 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         val query = _searchQuery.value
         val order = _sortOrder.value ?: SortOrder.DATE_DESC
         val showOnlyFavorites = _showOnlyFavorites.value ?: false
+        val currentUserId = userId
 
         val newSource = if (!query.isNullOrEmpty() && query != "%%") {
             if (showOnlyFavorites) {
-                repository.buscarNotasFavoritas(query)
+                repository.buscarNotasFavoritas(query, currentUserId)
             } else {
-                repository.buscarNotas(query)
+                repository.buscarNotas(query, currentUserId)
             }
         } else {
             if (showOnlyFavorites) {
                 when (order) {
-                    SortOrder.DATE_DESC -> repository.obtenerFavoritasPorFechaDesc()
-                    SortOrder.DATE_ASC -> repository.obtenerFavoritasPorFechaAsc()
+                    SortOrder.DATE_DESC -> repository.obtenerFavoritasPorFechaDesc(currentUserId)
+                    SortOrder.DATE_ASC -> repository.obtenerFavoritasPorFechaAsc(currentUserId)
                 }
             } else {
                 when (order) {
-                    SortOrder.DATE_DESC -> repository.obtenerNotasPorFechaDesc()
-                    SortOrder.DATE_ASC -> repository.obtenerNotasPorFechaAsc()
+                    SortOrder.DATE_DESC -> repository.obtenerNotasPorFechaDesc(currentUserId)
+                    SortOrder.DATE_ASC -> repository.obtenerNotasPorFechaAsc(currentUserId)
                 }
             }
         }
@@ -98,20 +103,24 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         _showOnlyFavorites.value = newValue
         return newValue
     }
+
     fun isShowingOnlyFavorites(): Boolean {
         return _showOnlyFavorites.value ?: false
     }
 
     fun insertar(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
-        repository.insertar(nota)
+        val notaConUsuario = nota.copy(userId = userId)
+        repository.insertar(notaConUsuario)
     }
 
     fun insertarLista(notas: List<Nota>) = viewModelScope.launch(Dispatchers.IO) {
-        repository.insertarLista(notas)
+        val notasConUsuario = notas.map { it.copy(userId = userId) }
+        repository.insertarLista(notasConUsuario)
     }
 
     fun actualizar(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
-        repository.actualizar(nota)
+        val notaConUsuario = nota.copy(userId = userId)
+        repository.actualizar(notaConUsuario)
     }
 
     fun eliminar(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
@@ -120,16 +129,23 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
 
     suspend fun obtenerTodasLasNotasList(): List<Nota> {
         return withContext(Dispatchers.IO) {
-            repository.obtenerTodasLasNotasList()
+            repository.obtenerTodasLasNotasList(userId)
         }
     }
 
     fun reemplazarTodasLasNotas(notas: List<Nota>) = viewModelScope.launch(Dispatchers.IO) {
-        repository.reemplazarTodasLasNotas(notas)
+        val notasConUsuario = notas.map { it.copy(userId = userId) }
+        repository.reemplazarTodasLasNotas(notasConUsuario, userId)
     }
 
     fun obtenerNotasEliminadas(): LiveData<List<Nota>> {
-        return repository.obtenerNotasEliminadas()
+        return repository.obtenerNotasEliminadas(userId)
+    }
+    fun asignarNotasLocalesAlUsuario() = viewModelScope.launch(Dispatchers.IO) {
+        val currentUserId = userId
+        if (currentUserId.isNotEmpty()) {
+            repository.asignarNotasLocalesAlUsuario(currentUserId)
+        }
     }
 
     companion object {
@@ -146,5 +162,4 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
             }
         }
     }
-
 }

@@ -45,6 +45,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
+
 class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
     private lateinit var emptyTitle: TextView
     private lateinit var emptySubtitle: TextView
@@ -96,13 +97,15 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 notaViewModel.actualizar(notaActualizada)
                 Toast.makeText(this, "Nota actualizada!", Toast.LENGTH_SHORT).show()
             } else {
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
                 val nuevaNota = Nota(
                     titulo = title,
                     contenido = content,
                     fecha = System.currentTimeMillis(),
-                    fechaModificacion = System.currentTimeMillis()
+                    fechaModificacion = System.currentTimeMillis(),
+                    userId = userId
                 )
-
                 notaViewModel.insertar(nuevaNota)
                 Toast.makeText(this, "Nota guardada!", Toast.LENGTH_SHORT).show()
             }
@@ -114,11 +117,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(
-            R.layout.activity_main
-        )
         setContentView(R.layout.activity_main)
-
 
         setupToolbarAndDrawer()
 
@@ -128,6 +127,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
         setupRecyclerView()
         initViewModel()
+        notaViewModel.asignarNotasLocalesAlUsuario()
         setupFab()
         setupBackPressHandler()
     }
@@ -140,6 +140,8 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
+        setupNavigationHeader()
+
 
         toggle = ActionBarDrawerToggle(
             this,
@@ -683,6 +685,18 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
+    }
+
+    private fun setupNavigationHeader() {
+        val headerView = navigationView.getHeaderView(0)
+
+        val textUserName = headerView.findViewById<TextView>(R.id.text_user_name)
+        val textUserEmail = headerView.findViewById<TextView>(R.id.text_user_email)
+
+        val user = FirebaseAuth.getInstance().currentUser
+
+        textUserName?.text = user?.displayName ?: "Usuario invitado"
+        textUserEmail?.text = user?.email ?: "Sin sesión iniciada"
     }
 }
 

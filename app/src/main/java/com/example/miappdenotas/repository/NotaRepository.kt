@@ -22,38 +22,42 @@ class NotaRepository(private val notaDao: NotaDao) {
         notaDao.eliminar(nota)
     }
 
-    suspend fun obtenerTodasLasNotasList(): List<Nota> {
-        return notaDao.obtenerTodasLasNotasList()
+    suspend fun obtenerTodasLasNotasList(userId: String): List<Nota> {
+        return notaDao.obtenerTodasLasNotasList(userId)
     }
 
-    suspend fun reemplazarTodasLasNotas(notas: List<Nota>) {
-        notaDao.reemplazarTodasLasNotas(notas)
+    suspend fun reemplazarTodasLasNotas(notas: List<Nota>, userId: String) {
+        notaDao.reemplazarTodasLasNotas(notas, userId)
     }
 
-    fun buscarNotas(searchQuery: String): LiveData<List<Nota>> {
-        return notaDao.buscarNotas(searchQuery)
+    fun buscarNotas(searchQuery: String, userId: String): LiveData<List<Nota>> {
+        return notaDao.buscarNotas(searchQuery, userId)
     }
 
-    fun buscarNotasFavoritas(searchQuery: String): LiveData<List<Nota>> {
-        return notaDao.buscarNotasFavoritas(searchQuery)
+    fun buscarNotasFavoritas(searchQuery: String, userId: String): LiveData<List<Nota>> {
+        return notaDao.buscarNotasFavoritas(searchQuery, userId)
     }
 
-    fun obtenerNotasPorFechaDesc(): LiveData<List<Nota>> {
-        return notaDao.obtenerNotasPorFechaDesc()
+    fun obtenerNotasPorFechaDesc(userId: String): LiveData<List<Nota>> {
+        return notaDao.obtenerNotasPorFechaDesc(userId)
     }
 
-    fun obtenerNotasPorFechaAsc(): LiveData<List<Nota>> {
-        return notaDao.obtenerNotasPorFechaAsc()
+    fun obtenerNotasPorFechaAsc(userId: String): LiveData<List<Nota>> {
+        return notaDao.obtenerNotasPorFechaAsc(userId)
     }
 
-    fun obtenerFavoritasPorFechaDesc(): LiveData<List<Nota>> {
-        return notaDao.obtenerFavoritasPorFechaDesc()
+    fun obtenerFavoritasPorFechaDesc(userId: String): LiveData<List<Nota>> {
+        return notaDao.obtenerFavoritasPorFechaDesc(userId)
     }
 
-    fun obtenerFavoritasPorFechaAsc(): LiveData<List<Nota>> {
-        return notaDao.obtenerFavoritasPorFechaAsc()
+    fun obtenerFavoritasPorFechaAsc(userId: String): LiveData<List<Nota>> {
+        return notaDao.obtenerFavoritasPorFechaAsc(userId)
     }
-    fun obtenerNotasEliminadas(): LiveData<List<Nota>> {
-        return notaDao.obtenerNotasEliminadas()
+
+    fun obtenerNotasEliminadas(userId: String): LiveData<List<Nota>> {
+        return notaDao.obtenerNotasEliminadas(userId)
+    }
+    suspend fun asignarNotasLocalesAlUsuario(userId: String) {
+        notaDao.asignarNotasLocalesAlUsuario(userId)
     }
 }

@@ -12,5 +12,7 @@ data class Nota(
     val fecha: Long = System.currentTimeMillis(),
     val favorita: Boolean = false,
     val eliminada: Boolean = false,
-    val fechaModificacion: Long = System.currentTimeMillis()
-)
+    val fechaModificacion: Long = System.currentTimeMillis(),
+    val userId: String = ""
+
+    )
