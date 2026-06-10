@@ -43,6 +43,10 @@
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_info"
                 android:title="Acerca de la Aplicación" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Cerrar sesión" />
         </menu>
     </item>
 

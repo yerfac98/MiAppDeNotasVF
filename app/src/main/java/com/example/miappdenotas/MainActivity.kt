@@ -41,6 +41,9 @@ import java.util.regex.Pattern
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
     private lateinit var emptyTitle: TextView
@@ -111,7 +114,11 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(
+            R.layout.activity_main
+        )
         setContentView(R.layout.activity_main)
+
 
         setupToolbarAndDrawer()
 
@@ -146,16 +153,28 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
+
                 R.id.nav_export -> exportNotes()
+
                 R.id.nav_import -> chooseImportFile()
+
                 R.id.nav_save_general -> quickSaveToLastFile()
+
                 R.id.nav_share_notes -> shareLastExportedFile()
+
                 R.id.nav_share_app -> shareApp()
+
                 R.id.nav_about -> showAbout()
+
                 R.id.nav_trash -> {
                     startActivity(Intent(this, TrashActivity::class.java))
                 }
+
+                R.id.nav_logout -> {
+                    logout()
+                }
             }
+
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
@@ -231,6 +250,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 Toast.makeText(this, "Ordenado por: Más Antigua", Toast.LENGTH_SHORT).show()
                 return true
             }
+
             R.id.action_filter_favorites -> {
                 val mostrandoFavoritos = notaViewModel.toggleFavoritesFilter()
 
@@ -243,6 +263,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                 Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
                 return true
             }
+
         }
 
         // Esto es necesario para manejar la acción de abrir/cerrar el Drawer
@@ -319,7 +340,11 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
                     try {
                         val notaActualizada = nota.copy(eliminada = true)
                         notaViewModel.actualizar(notaActualizada)
-                        Toast.makeText(this@MainActivity, "Nota enviada a papelera.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Nota enviada a papelera.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } catch (e: Exception) {
                         Log.e("MainActivity", "Error durante la eliminación", e)
                         Toast.makeText(
@@ -348,6 +373,7 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
     }
+
     private fun setupSwipeToDelete(recyclerView: RecyclerView) {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -643,6 +669,19 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
         if (!enabled) {
             Toast.makeText(this, "Procesando operación en DB...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun logout() {
+        FirebaseAuth.getInstance().signOut()
+
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .build()
+
+        GoogleSignIn.getClient(this, googleSignInOptions).signOut().addOnCompleteListener {
+            Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
     }
 }

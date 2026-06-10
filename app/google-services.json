@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "678714401329",
+    "project_id": "miappdenotasvf",
+    "storage_bucket": "miappdenotasvf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678714401329:android:c3f1f72a49efd6d6a22b10",
+        "android_client_info": {
+          "package_name": "com.example.miappdenotas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678714401329-lmgv4d3crbd8kc1f1p90fi16vsec9475.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.miappdenotas",
+            "certificate_hash": "0febb924b072a9077bdbf3571e01dc8c567e9c49"
+          }
+        },
+        {
+          "client_id": "678714401329-tah261lf1ut7boel2r4a4sgdih786imc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA015pTpk9SOwAth5R7IJApsl0lqYtZC3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678714401329-tah261lf1ut7boel2r4a4sgdih786imc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
