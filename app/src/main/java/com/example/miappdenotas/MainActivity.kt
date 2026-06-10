@@ -40,8 +40,11 @@ import java.io.OutputStream
 import java.util.regex.Pattern
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
+    private lateinit var emptyTitle: TextView
+    private lateinit var emptySubtitle: TextView
     private lateinit var emptyView: View
 
     // ********** CONSTANTES **********
@@ -101,10 +104,13 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
         setContentView(R.layout.activity_main)
 
         setupToolbarAndDrawer()
-        initViewModel()
-        setupRecyclerView()
 
         emptyView = findViewById(R.id.empty_view)
+        emptyTitle = findViewById(R.id.empty_title)
+        emptySubtitle = findViewById(R.id.empty_subtitle)
+
+        setupRecyclerView()
+        initViewModel()
         setupFab()
         setupBackPressHandler()
     }
@@ -152,10 +158,21 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
         notaViewModel = ViewModelProvider(this, factory)[NotaViewModel::class.java]
 
-        // Observa la LiveData que maneja la lista completa o los resultados de la búsqueda/ordenamiento
         notaViewModel.notasFiltradas.observe(this, Observer { notas ->
             adapter.submitList(notas)
-            emptyView.visibility = if (notas.isEmpty()) View.VISIBLE else View.GONE
+
+            val isEmpty = notas.isEmpty()
+            emptyView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+
+            if (isEmpty) {
+                if (notaViewModel.isShowingOnlyFavorites()) {
+                    emptyTitle.text = "No tienes notas favoritas"
+                    emptySubtitle.text = "Marca una estrella en alguna nota para verla aquí"
+                } else {
+                    emptyTitle.text = "No tienes notas todavía"
+                    emptySubtitle.text = "Presiona + para crear tu primera nota"
+                }
+            }
         })
     }
 

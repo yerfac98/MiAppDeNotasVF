@@ -43,6 +43,7 @@
             android:visibility="gone">
 
             <TextView
+                android:id="@+id/empty_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No tienes notas todavía"
@@ -51,6 +52,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/empty_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

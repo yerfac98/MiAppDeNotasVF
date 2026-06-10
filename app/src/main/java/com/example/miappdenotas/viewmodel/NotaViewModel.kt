@@ -98,6 +98,9 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
         _showOnlyFavorites.value = newValue
         return newValue
     }
+    fun isShowingOnlyFavorites(): Boolean {
+        return _showOnlyFavorites.value ?: false
+    }
 
     fun insertar(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
         repository.insertar(nota)
@@ -143,4 +146,5 @@ class NotaViewModel(private val repository: NotaRepository) : ViewModel() {
             }
         }
     }
+
 }
