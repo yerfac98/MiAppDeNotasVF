@@ -81,16 +81,26 @@ class MainActivity : AppCompatActivity(), NotaAdapter.OnItemClickListener {
 
             if (title == null || content == null) return@registerForActivityResult
 
-            val nota = Nota(titulo = title, contenido = content)
-
             if (id != -1) {
-                // Actualizar nota
-                nota.id = id
-                notaViewModel.actualizar(nota)
+                val notaActualizada = Nota(
+                    id = id,
+                    titulo = title,
+                    contenido = content,
+                    fecha = System.currentTimeMillis(),
+                    fechaModificacion = System.currentTimeMillis()
+                )
+
+                notaViewModel.actualizar(notaActualizada)
                 Toast.makeText(this, "Nota actualizada!", Toast.LENGTH_SHORT).show()
             } else {
-                // Guardar nueva nota
-                notaViewModel.insertar(nota)
+                val nuevaNota = Nota(
+                    titulo = title,
+                    contenido = content,
+                    fecha = System.currentTimeMillis(),
+                    fechaModificacion = System.currentTimeMillis()
+                )
+
+                notaViewModel.insertar(nuevaNota)
                 Toast.makeText(this, "Nota guardada!", Toast.LENGTH_SHORT).show()
             }
         } else {

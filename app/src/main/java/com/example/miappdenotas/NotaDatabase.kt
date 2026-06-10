@@ -11,7 +11,7 @@ import com.example.miappdenotas.model.NotaDao
 
 @Database(
     entities = [Nota::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class NotaDatabase : RoomDatabase() {
@@ -38,6 +38,17 @@ abstract class NotaDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE notas_table ADD COLUMN fechaModificacion INTEGER NOT NULL DEFAULT 0"
+                )
+                database.execSQL(
+                    "UPDATE notas_table SET fechaModificacion = fecha WHERE fechaModificacion = 0"
+                )
+            }
+        }
+
         fun obtenerInstancia(context: Context): NotaDatabase {
             return INSTANCIA ?: synchronized(this) {
                 val instancia = Room.databaseBuilder(
@@ -45,7 +56,11 @@ abstract class NotaDatabase : RoomDatabase() {
                     NotaDatabase::class.java,
                     "nota_db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(
+                        MIGRATION_1_2,
+                        MIGRATION_2_3,
+                        MIGRATION_3_4
+                    )
                     .build()
 
                 INSTANCIA = instancia

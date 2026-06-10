@@ -11,5 +11,6 @@ data class Nota(
     val contenido: String,
     val fecha: Long = System.currentTimeMillis(),
     val favorita: Boolean = false,
-    val eliminada: Boolean = false
+    val eliminada: Boolean = false,
+    val fechaModificacion: Long = System.currentTimeMillis()
 )

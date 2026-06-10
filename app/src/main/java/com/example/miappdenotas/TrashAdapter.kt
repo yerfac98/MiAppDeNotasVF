@@ -43,7 +43,11 @@ class TrashAdapter : ListAdapter<Nota, TrashAdapter.TrashHolder>(DiffCallback())
 
         fun bind(nota: Nota) {
             textViewTitle.text = nota.titulo
-            textViewFavorite.text = "🗑"
+            textViewFavorite.text = if (nota.favorita) {
+                "⭐🗑"
+            } else {
+                "🗑"
+            }
 
             textViewContent.text = if (nota.contenido.length > 35) {
                 nota.contenido.substring(0, 35) + "..."
